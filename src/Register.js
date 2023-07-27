@@ -10,7 +10,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // RegEx
 // 複習 看一下怎麼用 跟意思
-const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3, 23}$/;
+// USER_REGEX： Start with a-z followed by 3-23 a-z, A-Z, 0-9, -, _
+const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+// PWD_REGEX： At least 1 lowercase, uppercase, number, special character. 8~24 characters.
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 // main
@@ -85,6 +87,7 @@ const Register = () => {
       </p>
       <h1>Register</h1>
       <form>
+        {/* Username block */}
         <label htmlFor="username">
           Username:
           {/* V/X indicator */}
@@ -129,6 +132,98 @@ const Register = () => {
           4 to 24 characters. <br />
           Must begin with a letter. <br />
           Letters, numbers, underscores, hyphens allowed.
+        </p>
+
+        {/* password block */}
+        <label htmlFor="password">
+          Password：
+          {/* V/X indicator */}
+          <span className={validPwd ? "valid" : "hide"}>
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
+          {/* if user is empty -> hide X */}
+          {/* if user is not empty, depend on validName */}
+          <span className={validPwd || !pwd ? "hide" : "invalid"}>
+            <FontAwesomeIcon icon={faTimes} />
+          </span>
+        </label>
+        <input
+          type="password"
+          id="password"
+          // Note: no ref attribute because dont want focus when page load (should focus on username)
+          // autoComplete is not supported in password
+          onChange={(e) => {
+            setPwd(e.target.value);
+          }}
+          required
+          // accessibilities
+          // aria-invalid: if name is not valid(validName:false), aria-invalid is true
+          aria-invalid={validPwd ? "false" : "true"}
+          aria-describedby="pwdnote"
+          onFocus={() => {
+            setPwdFocus(true);
+          }}
+          onBlur={() => {
+            setPwdFocus(false);
+          }}
+        />
+        <p
+          id="pwdnote"
+          className={pwdFocus && !validPwd ? "instructions" : "offscreen"}
+        >
+          <FontAwesomeIcon icon={faInfoCircle} />
+          8 to 24 characters. <br />
+          Must include uppercase and lowercase letters, a number and a special
+          character.
+          <br />
+          Allowed special characters:{" "}
+          {/* putting each special character in span with aria-label */}
+          {/* so that the screen reader will read it */}
+          <span aria-label="exclamation mark">!</span>{" "}
+          <span aria-label="at symbol">@</span>{" "}
+          <span aria-label="hash tag">#</span>{" "}
+          <span aria-label="dollar sign">$</span>{" "}
+          <span aria-label="percent">%</span>
+        </p>
+
+        {/* Confirm password block */}
+        <label htmlFor="confirm_pwd">
+          Confirm Password：
+          {/* V/X indicator */}
+          {/* Note the differences to username and password */}
+          <span className={validMatch && matchPwd ? "valid" : "hide"}>
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
+          {/* if user is empty -> hide X */}
+          {/* if user is not empty, depend on validName */}
+          <span className={validMatch || !matchPwd ? "hide" : "invalid"}>
+            <FontAwesomeIcon icon={faTimes} />
+          </span>
+        </label>
+        <input
+          type="password"
+          id="confirm_pwd"
+          onChange={(e) => {
+            setMatchPwd(e.target.value);
+          }}
+          required
+          // accessibilities
+          // aria-invalid: if name is not valid(validName:false), aria-invalid is true
+          aria-invalid={validMatch ? "false" : "true"}
+          aria-describedby="confirmnote"
+          onFocus={() => {
+            setMatchFocus(true);
+          }}
+          onBlur={() => {
+            setMatchFocus(false);
+          }}
+        />
+        <p
+          id="confirmnote"
+          className={matchFocus && !validMatch ? "instructions" : "offscreen"}
+        >
+          <FontAwesomeIcon icon={faInfoCircle} /> Must match the first password
+          input field.
         </p>
       </form>
     </section>
